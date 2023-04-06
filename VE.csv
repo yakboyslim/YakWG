@@ -1,2 +1,0 @@
-LOG NAME (Change THESE),PUTSP_kPa_,PUT_kPa_ ,ExhFlowFac__, IntFlowFac__,WGP_DValue___,WGIValue___,PedalPos___,WGPosFinal___,ValveLiftPos__,EngineSpeed_rpm_,DVPosition___,Boost_psi_,PUTBOL__,PUTTOL__,PUTIInhibit__
-Variable NAME,PUT,PUTSP,EFF,IFF,WG_PD,WG_I,Pedal,WG_Final,VVL,RPM,DV,BOOST,BOL,TOL,I_INH
