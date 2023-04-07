@@ -16,3 +16,10 @@ This program will open log files and determine areas of WOT and suggest WG Feedf
 1. Download an installer from the releases tab.
 2. Open this file, and approve any security requests.
 The installer and program were compiled using MATLAB. On first install you may need to install the MATLAB runtime environment from the internet.
+
+## PIDS
+### lv_inh_put_ctl_i|"Flag to inhibit PUT Controller I share"
+#### S50
+PUT I Inhibit,x,%01.0f,0xd0000b76,1,FALSE,0,1,-1000,1000,0,TRUE
+#### A05
+PUT I Inhibit,x,%01.0f,0xd00005b8,1,FALSE,0,1,-1000,1000,0,TRUE
