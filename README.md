@@ -5,11 +5,13 @@ This program will open log files and determine areas of WOT and suggest WG Feedf
 
 ----
 ## How to use
-1. Change first row of variables variables.csv file to match your logs. (TOL, BOL, and I_INH are optional)
-2. Copy the x-axis scalars into exh_axis.csv and y-axis scalars into int_axis.csv
+1. Change first row of variables variables.csv file to match your logs. (I_INH is optional)
+2. Copy the x-axis scalars into x_axis.csv and y-axis scalars into y_axis.csv (Either what you have stock, or what you want to use if shifting axis values)
 3. Click the WG_Tuner.exe
 4. Select your log. Can select multiple at once.
-5. The program executes and will output two results files in the same folder as the logs came from. Only cells for which data was found in the logs will have recommended values. Feel free to enter these values, but as always use caution and common sense. Smooth as necessary into surrounding cells.
+5. Choose FF or SWG logic
+6. Choose fudge factor and trim values. Defaults should work fine.
+7. The program executes and will show a few plots, but more importantly output two results files in the same folder as the logs came from. Only cells for which data was found in the logs will have recommended values. Feel free to enter these values, but as always use caution and common sense. Smooth as necessary into surrounding cells.
 
 ----
 ## How to install
@@ -17,7 +19,7 @@ This program will open log files and determine areas of WOT and suggest WG Feedf
 2. Open this file, and approve any security requests.
 The installer and program were compiled using MATLAB. On first install you may need to install the MATLAB runtime environment from the internet.
 
-## PIDS
+## Optional PIDS
 ### lv_inh_put_ctl_i|"Flag to inhibit PUT Controller I share"
 #### S50
 PUT I Inhibit,x,%01.0f,0xd0000b76,1,FALSE,0,1,-1000,1000,0,TRUE
