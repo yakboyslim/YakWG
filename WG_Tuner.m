@@ -1,5 +1,3 @@
-function WG_Tuner
-
 %% Read Log
 clear all
 close all
@@ -39,7 +37,25 @@ end
 
 logvars = log.Properties.VariableNames;
 
-fudge=0.71;
+%% Determine SWG/FF
+
+WGlogic = questdlg('Are you using FeedForward or SWG?','WG Logic','FF','SWG','FF');
+
+if strcmp(WGlogic,'SWG')
+    log.IFF=log.RPM
+    log.EFF=log.PUTSP
+end
+
+prompt = {'PUT fudge factor:','Minimum pedal:','Maximum PUT delta:','Minimum boost:'};
+dlgtitle = 'Inputs';
+dims = [1 50];
+definput = {'0.71','50','10','0'};
+answer = inputdlg(prompt,dlgtitle,dims,definput)
+fudge=str2num(answer{1});
+minpedal=str2num(answer{2});
+maxdelta=str2num(answer{3});
+minboost=str2num(answer{4});
+
 %% Create Derived Values
 log.deltaPUT=log.PUT-log.PUTSP;
 log.WGNEED=log.WG_Final-log.deltaPUT.*fudge;
@@ -47,15 +63,8 @@ log.WGCL=log.WG_Final-log.WG_Base;
 
 %% Create Trimmed datasets
 
-minpedal=50
-minboost=0
-maxdelta=10
-
 USE=log;
 if any(contains(logvars,'BOL')) && any(contains(logvars,'TOL')) && any(contains(logvars,'I_INH'))
-    USE(USE.DV>50,:) = [];
-    USE(USE.BOL>0,:) = [];
-    USE(USE.TOL>0,:) = [];
     USE(USE.I_INH>0,:) = [];
 else
     USE(USE.Pedal<minpedal,:) = [];
@@ -72,8 +81,8 @@ end
 
 
 %% Read Axis Values
-exhaxis=csvread(fullfile(getcurrentdir,"exh_axis.csv"));
-intaxis=csvread(fullfile(getcurrentdir,"int_axis.csv"));
+exhaxis=csvread(fullfile(getcurrentdir,"x_axis.csv"));
+intaxis=csvread(fullfile(getcurrentdir,"y_axis.csv"));
 exhlabels=string(exhaxis);
 intlabels=string(intaxis);
 
@@ -199,8 +208,5 @@ yticks(intaxis);
 rows=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
 lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
-
-end
-
 
 
