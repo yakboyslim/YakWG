@@ -112,7 +112,7 @@ COUNT0=SUM1;
 X1=discretize(USE_VVL1.EFF,xedges);
 Y1=discretize(USE_VVL1.IFF,yedges);
 for i=1:height(USE_VVL1)
-   weight=USE_VVL1.deltaPUT(i)*(0.5-abs(USE_VVL1.EFF(i)-X1(i)))*(0.5-abs(USE_VVL1.IFF(i)-Y1(i)));
+   weight=abs(USE_VVL1.deltaPUT(i)*(0.5-abs(USE_VVL1.EFF(i)-X1(i)))*(0.5-abs(USE_VVL1.IFF(i)-Y1(i))));
    SUM1(Y1(i),X1(i))=SUM1(Y1(i),X1(i))+weight*USE_VVL1.WGNEED(i);
    COUNT1(Y1(i),X1(i))=COUNT1(Y1(i),X1(i))+weight;
 end
@@ -124,7 +124,7 @@ Res_1=array2table(AVG1,'VariableNames',exhlabels,'RowNames',intlabels);
 X0=discretize(USE_VVL0.EFF,xedges);
 Y0=discretize(USE_VVL0.IFF,yedges);
 for i=1:height(USE_VVL0)
-   weight=USE_VVL0.deltaPUT(i)*(0.5-abs(USE_VVL0.EFF(i)-X0(i)))*(0.5-abs(USE_VVL0.IFF(i)-Y0(i)));
+   weight=abs(USE_VVL0.deltaPUT(i)*(0.5-abs(USE_VVL0.EFF(i)-X0(i)))*(0.5-abs(USE_VVL0.IFF(i)-Y0(i))));
    SUM0(Y0(i),X0(i))=SUM0(Y0(i),X0(i))+(weight)*USE_VVL0.WGNEED(i);
    COUNT0(Y0(i),X0(i))=COUNT0(Y0(i),X0(i))+weight;
 end
