@@ -42,8 +42,8 @@ logvars = log.Properties.VariableNames;
 WGlogic = questdlg('Are you using FeedForward or SWG?','WG Logic','FF','SWG','FF');
 
 if strcmp(WGlogic,'SWG')
-    log.IFF=log.RPM
-    log.EFF=log.PUTSP
+    log.EFF=log.RPM
+    log.IFF=log.PUTSP
 end
 
 prompt = {'PUT fudge factor:','Minimum pedal:','Maximum PUT delta:','Minimum boost:'};
