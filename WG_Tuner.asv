@@ -133,10 +133,10 @@ end
 AVG0=round(SUM0./COUNT0)/100;
 Res_0=array2table(AVG0,'VariableNames',exhlabels,'RowNames',intlabels);
 
-% %% Save Tables
+%% Save Tables
 
-% writetable(Res_1,fullfile(pathopen,"VVL1 WG Results.csv"),'WriteRowNames',true);
-% writetable(Res_0,fullfile(pathopen,"VVL0 WG Results.csv"),'WriteRowNames',true);
+writetable(Res_1,fullfile(pathopen,"VVL1 WG Results.csv"),'WriteRowNames',true);
+writetable(Res_0,fullfile(pathopen,"VVL0 WG Results.csv"),'WriteRowNames',true);
 
 %% Plot Scatters
 
@@ -212,18 +212,10 @@ lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
 
 
-fig0 = uifigure('Name','VVL0 WG Results',"Position",[500 500 760 360]);
-uit = uitable(fig0, "Data",Res_0, "Position",[20 20 720 320]);
+fig = uifigure("Position",[500 500 760 360]);
+uit = uitable(fig, "Data",Res_0, "Position",[20 20 720 320]);
 
-styleIndices = ~ismissing(Res_0);
+styleIndices = ismissing(tdata);
 [row,col] = find(styleIndices);
-s = uistyle("BackgroundColor",'gr');
-addStyle(uit,s,"cell",[row,col]);
-
-fig1 = uifigure('Name','VVL1 WG Results',"Position",[500 500 760 360]);
-uit = uitable(fig1, "Data",Res_1, "Position",[20 20 720 320]);
-
-styleIndices = ~ismissing(Res_1);
-[row,col] = find(styleIndices);
-s = uistyle("BackgroundColor",'gr');
+s = uistyle("BackgroundColor",[1 0.6 0.6]);
 addStyle(uit,s,"cell",[row,col]);
