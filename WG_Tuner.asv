@@ -5,9 +5,31 @@ close all
 %% Get Variable list
 
 varconv=readtable(fullfile(getcurrentdir,"variables.csv"),Delimiter=',',TextType='string',ReadVariableNames=false);
-varconv=table2array(varconv);
-varconv(:,1)=[];
 
+xaxis=csvread(fullfile(getcurrentdir,"x_axis.csv"));
+yaxis=csvread(fullfile(getcurrentdir,"y_axis.csv"));
+
+edit = questdlg('Edit variable conversion and axis tables?','Edit?','Yes','No','Yes');
+if strcmp(edit,'Yes')
+    figedit = uifigure('Name','DO NOT CLOSE THIS TABLE USING THE X, USE CONTINUE BUTTON',"Position",[500 500 760 500]);
+    lbl1 = uilabel(figedit,"Text",'Variables','Position',[20 450 720 30]);
+    uit1 = uitable(figedit, "Data",varconv, "Position",[20 350 720 100], 'ColumnEditable',true);
+    lbl2 = uilabel(figedit,"Text",'X Axis','Position',[20 290 720 30]);
+    uit2 = uitable(figedit, "Data",xaxis, "Position",[20 210 720 80], 'ColumnEditable',true);
+    lbl3 = uilabel(figedit,"Text",'Y Axis','Position',[20 150 720 30]);
+    uit3 = uitable(figedit, "Data",yaxis, "Position",[20 70 720 80], 'ColumnEditable',true);
+    c = uicontrol(figedit,'String','CONTINUE','Callback','uiresume(figedit)')
+    uiwait(figedit)    
+    varconv = uit1.Data;
+    xaxis = uit2.Data;
+    yaxis = uit3.Data;
+    writetable(varconv,fullfile(getcurrentdir,"variables.csv"),'WriteVariableNames',false)
+    writematrix(xaxis,fullfile(getcurrentdir,"x_axis.csv"))
+    writematrix(yaxis,fullfile(getcurrentdir,"y_axis.csv"))
+    close(figedit)
+end
+
+varconv=table2array(varconv);
 %% Open Files
 
 [fileopen,pathopen]=uigetfile('*.csv','Select Log CSV File','MultiSelect','on');
@@ -29,7 +51,7 @@ end
 
 %% Convert Variables
 logvars = log.Properties.VariableNames;
-for i=1:width(varconv)
+for i=2:width(varconv)
     if any(contains(logvars,varconv(1,i)))
         log=renamevars(log,varconv(1,i),varconv(2,i));
     end
@@ -83,28 +105,28 @@ end
 
 
 %% Read Axis Values
-exhaxis=csvread(fullfile(getcurrentdir,"x_axis.csv"));
-intaxis=csvread(fullfile(getcurrentdir,"y_axis.csv"));
-exhlabels=string(exhaxis);
-intlabels=string(intaxis);
+% exhaxis=csvread(fullfile(getcurrentdir,"x_axis.csv"));
+% intaxis=csvread(fullfile(getcurrentdir,"y_axis.csv"));
+exhlabels=string(xaxis);
+intlabels=string(yaxis);
 
 %% Create Bins
 
-xedges(1)=exhaxis(1);
-xedges(length(exhaxis)+1)=exhaxis(length(exhaxis))+2;
-for i=1:length(exhaxis)-1;
-    xedges(i+1)=(exhaxis(i)+exhaxis(i+1))/2;
+xedges(1)=xaxis(1);
+xedges(length(xaxis)+1)=xaxis(length(xaxis))+2;
+for i=1:length(xaxis)-1;
+    xedges(i+1)=(xaxis(i)+xaxis(i+1))/2;
 end
 
-yedges(1)=intaxis(1);
-yedges(length(intaxis)+1)=intaxis(length(intaxis))+2;
-for i=1:length(intaxis)-1;
-    yedges(i+1)=(intaxis(i)+intaxis(i+1))/2;
+yedges(1)=yaxis(1);
+yedges(length(yaxis)+1)=yaxis(length(yaxis))+2;
+for i=1:length(yaxis)-1;
+    yedges(i+1)=(yaxis(i)+yaxis(i+1))/2;
 end
 
 %% Initialize matrixes
 
-SUM1=zeros(length(intaxis),length(exhaxis));
+SUM1=zeros(length(yaxis),length(xaxis));
 COUNT1=SUM1;
 SUM0=SUM1;
 COUNT0=SUM1;
@@ -133,10 +155,10 @@ end
 AVG0=round(SUM0./COUNT0)/100;
 Res_0=array2table(AVG0,'VariableNames',exhlabels,'RowNames',intlabels);
 
-%% Save Tables
+% %% Save Tables
 
-writetable(Res_1,fullfile(pathopen,"VVL1 WG Results.csv"),'WriteRowNames',true);
-writetable(Res_0,fullfile(pathopen,"VVL0 WG Results.csv"),'WriteRowNames',true);
+% writetable(Res_1,fullfile(pathopen,"VVL1 WG Results.csv"),'WriteRowNames',true);
+% writetable(Res_0,fullfile(pathopen,"VVL0 WG Results.csv"),'WriteRowNames',true);
 
 %% Plot Scatters
 
@@ -170,8 +192,8 @@ ylabel('Int Flow Factor') ;
 % set(gca,'TickLength',[1 1])
 grid on;
 set(gca,"XAxisLocation","top");
-xticks(exhaxis);
-yticks(intaxis);
+xticks(xaxis);
+yticks(yaxis);
 rows=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
 lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
@@ -205,17 +227,25 @@ ylabel('Int Flow Factor') ;
 % set(gca,'TickLength',[1 1])
 grid on;
 set(gca,"XAxisLocation","top");
-xticks(exhaxis);
-yticks(intaxis);
+xticks(xaxis);
+yticks(yaxis);
 rows=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
 lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
 
 
-fig = uifigure("Position",[500 500 760 360]);
-uit = uitable(fig, "Data",Res_0, "Position",[20 20 720 320]);
+fig0 = uifigure('Name','VVL0 WG Results',"Position",[500 500 760 360]);
+uit = uitable(fig0, "Data",Res_0, "Position",[20 20 720 320]);
 
-styleIndices = ismissing(tdata);
+styleIndices = ~ismissing(Res_0);
 [row,col] = find(styleIndices);
-s = uistyle("BackgroundColor",[1 0.6 0.6]);
+s = uistyle("BackgroundColor",'gr');
+addStyle(uit,s,"cell",[row,col]);
+
+fig1 = uifigure('Name','VVL1 WG Results',"Position",[500 500 760 360]);
+uit = uitable(fig1, "Data",Res_1, "Position",[20 20 720 320]);
+
+styleIndices = ~ismissing(Res_1);
+[row,col] = find(styleIndices);
+s = uistyle("BackgroundColor",'gr');
 addStyle(uit,s,"cell",[row,col]);
