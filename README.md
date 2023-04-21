@@ -6,13 +6,14 @@ This program will open log files and determine areas of WOT and suggest WG Feedf
 ----
 ## How to use
 
-1. Change first row of variables variables.csv file to match your logs.(I_INH is optional) **The trick here is to remove any spaces and replace special characters with _**
-2. Copy the x-axis scalars into x_axis.csv and y-axis scalars into y_axis.csv (Either what you have stock, or what you want to use if shifting axis values)
-4. Click the WG_Tuner.exe
+1. Click the WG_Tuner.exe
+1. Select 'Yes' to edit variables and axis if it is the first time, or you need to make changes
+2. Change first row of variables to match your logs.(I_INH is optional) **The trick here is to remove any spaces and replace special characters with _**
+2. Copy the x-axis and y-axis scalars from you WG tables into the x-axis and y-axis fields (Either what you have stock, or what you want to use if shifting axis values)
 5. Select your log. Can select multiple at once.
 6. Choose FF or SWG logic
 7. Choose fudge factor and trim values. Defaults should work fine.
-8. The program executes and will show a few plots, but more importantly output two results files in the same folder as the logs came from. Only cells for which data was found in the logs will have recommended values. Feel free to enter these values, but as always use caution and common sense. Smooth as necessary into surrounding cells.
+8. The program executes and will show a few plots, and open two output tables. Only cells for which data was found in the logs will have recommended values. Feel free to enter these values, but as always use caution and common sense. Smooth as necessary into surrounding cells.
 
 ----
 ## How to install
