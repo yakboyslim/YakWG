@@ -38,15 +38,15 @@ intlabels=string(yaxis);
 [fileopen,pathopen]=uigetfile('*.csv','Select Log CSV File','MultiSelect','on');
 
 if iscell(fileopen)
-    log=readtable(fullfile(pathopen,string(fileopen(1))));
+    log=readtable(fullfile(pathopen,string(fileopen(1))),"VariableNamingRule","preserve");
     log=log(:,1:width(log)-1);
 else
-    log=readtable(fullfile(pathopen,fileopen));
+    log=readtable(fullfile(pathopen,fileopen),"VariableNamingRule","preserve");
     log=log(:,1:width(log)-1);
 end
 if iscell(fileopen)
     for i=2:length(fileopen)
-        openlog=readtable(fullfile(pathopen,string(fileopen(i))));
+        openlog=readtable(fullfile(pathopen,string(fileopen(i))),"VariableNamingRule","preserve");
         openlog=openlog(:,1:width(openlog)-1);
         log=vertcat(log,openlog);
     end
@@ -197,7 +197,9 @@ grid on;
 set(gca,"XAxisLocation","top");
 xticks(xaxis);
 yticks(yaxis);
-rows=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
+rows=[1,1,1,1]
+rowsfound=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
+rows(1,1:numel(rowsfound)) = rowsfound;
 lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
 
@@ -232,7 +234,9 @@ grid on;
 set(gca,"XAxisLocation","top");
 xticks(xaxis);
 yticks(yaxis);
-rows=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
+rows=[1,1,1,1]
+rowsfound=[find(USE.RPM>2000,1) find(USE.RPM>3000,1) find(USE.RPM>4000,1) find(USE.RPM>5000,1)];
+rows(1,1:numel(rowsfound)) = rowsfound;
 lscatter(USE.EFF(rows),USE.IFF(rows),[2000 3000 4000 5000]);
 hold off
 

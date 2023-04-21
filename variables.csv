@@ -1,2 +1,2 @@
-LOG NAME (Change THESE),PUTSP_kPa_,PUT_kPa_,ExhFlowFac__,IntFlowFac__,PedalPos___,WGPosFinal___,ValveLiftPos__,EngineSpeed_rpm_,DVPosition___,Boost_psi_,PUTIInhibit__,WGPosBase___
+LOG NAME (Change THESE),PUT SP (kpa),PUT (kpa),Exh Flow Factor (),Intake Flow Fact (),Pedal Pos (%),WG Pos Final (%),Valve Lift Pos (),Engine Speed (rpm),DV Position (%),Boost (psi),PUT Inhibit  (),WG Pos Base (%)
 Variable NAME,PUTSP,PUT,EFF,IFF,Pedal,WG_Final,VVL,RPM,DV,BOOST,I_INH,WG_Base
