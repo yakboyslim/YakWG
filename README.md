@@ -8,7 +8,7 @@ This program will open log files and determine areas of WOT and suggest WG Feedf
 
 1. Click the WG_Tuner.exe
 1. Select 'Yes' to edit variables and axis if it is the first time, or you need to make changes
-2. Change first row of variables to match your logs.(I_INH is optional) **The trick here is to remove any spaces and replace special characters with _**
+2. Change first row of variables to match your logs.(I_INH is optional)
 2. Copy the x-axis and y-axis scalars from you WG tables into the x-axis and y-axis fields (Either what you have stock, or what you want to use if shifting axis values)
 5. Select your log. Can select multiple at once.
 6. Choose FF or SWG logic
