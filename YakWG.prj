@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="1925400648" file="Y:\Documents\YakWG\YakWG.prj" location="Y:\Documents\YakWG" name="YakWG" preferred-package-location="Y:\Documents\YakWG\YakWG\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="2968780289" file="Y:\Documents\YakWG\YakWG.prj" location="Y:\Documents\YakWG" name="YakWG" preferred-package-location="Y:\Documents\YakWG\YakWG\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>WG_Tuner</param.appname>
     <param.icon>${PROJECT_ROOT}\YakWG_resources\icon.ico</param.icon>
     <param.icons>
@@ -91,6 +91,7 @@
       <file>${PROJECT_ROOT}\customcolormap.m</file>
       <file>${PROJECT_ROOT}\getcurrentdir.m</file>
       <file>${PROJECT_ROOT}\lscatter.m</file>
+      <file>${PROJECT_ROOT}\lsq_lut_piecewise.m</file>
     </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}\YakWG\for_testing" name="readme.txt" optional="true">Y:\Documents\YakWG\YakWG\for_testing\readme.txt</file>
