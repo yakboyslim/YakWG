@@ -48,7 +48,7 @@ if iscell(fileopen)
     for i=2:length(fileopen)
         openlog=readtable(fullfile(pathopen,string(fileopen(i))),"VariableNamingRule","preserve");
         openlog=openlog(:,1:width(openlog)-1);
-        log=vertcat(log,openlog);
+        log=outerjoin(log,openlog,'MergeKeys', true);
     end
 end
 
@@ -69,6 +69,7 @@ WGlogic = questdlg('Are you using FeedForward or SWG?','WG Logic','FF','SWG','FF
 if strcmp(WGlogic,'SWG')
     log.EFF=log.RPM
     log.IFF=log.PUTSP
+    yaxis=yaxis/10
 end
 
 %% Get other inputs
@@ -88,30 +89,6 @@ log.deltaPUT=log.PUT-log.PUTSP;
 log.WGNEED=log.WG_Final-log.deltaPUT.*fudge;
 log.WGCL=log.WG_Final-log.WG_Base;
 
-%% Create Trimmed datasets
-
-USE=log;
-if any(contains(logvars,'I_INH'))
-    USE(USE.I_INH>0,:) = [];
-else
-    USE(USE.Pedal<minpedal,:) = [];
-end
-    USE(USE.DV>50,:) = [];
-    USE(USE.BOOST<minboost,:) = [];
-    USE(abs(USE.deltaPUT)>maxdelta,:) = [];
-    USEO=USE;
-    USEO(USEO.WG_Final>98,:) = [];
-    USE_VVL1=USEO;
-    USE_VVL1(USE_VVL1.VVL~=1,:) = [];
-    USE_VVL0=USEO;
-    USE_VVL0(USE_VVL0.VVL~=0,:) = [];
-
-
-%% Read Axis Values
-% exhaxis=csvread(fullfile(getcurrentdir,"x_axis.csv"));
-% intaxis=csvread(fullfile(getcurrentdir,"y_axis.csv"));
-% exhlabels=string(xaxis);
-% intlabels=string(yaxis);
 
 %% Create Bins
 
@@ -127,41 +104,106 @@ for i=1:length(yaxis)-1;
     yedges(i+1)=(yaxis(i)+yaxis(i+1))/2;
 end
 
+
+%% Create Trimmed datasets
+
+USE=log;
+if any(contains(logvars,'I_INH'))
+    USE(USE.I_INH>0,:) = [];
+else
+    USE(USE.Pedal<minpedal,:) = [];
+end
+
+USE(USE.DV>50,:) = [];
+USE(USE.BOOST<minboost,:) = [];
+USE(abs(USE.deltaPUT)>maxdelta,:) = [];
+USEO=USE;
+USEO(USEO.WG_Final>98,:) = [];
+
+USEO.X=discretize(USEO.EFF,xedges);
+USEO.Y=discretize(USEO.IFF,yedges);
+USEO.XAMP=discretize(USEO.AMP*10,[-inf 750 930 990 inf]);
+USEO.YAMP=discretize(USEO.WGF,[-inf 100 300 500 inf]);
+
+
+
+USE_VVL1=USEO;
+USE_VVL1(USE_VVL1.VVL~=1,:) = [];
+USE_VVL0=USEO;
+USE_VVL0(USE_VVL0.VVL~=0,:) = [];
+
+
+
 %% Initialize matrixes
 
 SUM1=zeros(length(yaxis),length(xaxis));
 COUNT1=SUM1;
 SUM0=SUM1;
 COUNT0=SUM1;
+COUNTFAC=zeros(4,4);
+SUMFAC=zeros(4,4);
+COUNTOFS=zeros(4,4);
+SUMOFS=zeros(4,4);
+columns1= zeros(10,16)
+rows1=columns1
+rows0=rows1
+columns0=columns1
+
 
 %% Discretize VVL1
 
-X1=discretize(USE_VVL1.EFF,xedges);
-Y1=discretize(USE_VVL1.IFF,yedges);
 for i=1:height(USE_VVL1)
-   weight=abs(USE_VVL1.deltaPUT(i))*(0.5-abs(USE_VVL1.EFF(i)-X1(i)))*(0.5-abs(USE_VVL1.IFF(i)-Y1(i)));
-   SUM1(Y1(i),X1(i))=SUM1(Y1(i),X1(i))+weight*USE_VVL1.WGNEED(i);
-   COUNT1(Y1(i),X1(i))=COUNT1(Y1(i),X1(i))+weight;
+   weight=abs(USE_VVL1.deltaPUT(i))*(0.5-abs(USE_VVL1.EFF(i)-USE_VVL1.X(i)))*(0.5-abs(USE_VVL1.IFF(i)-USE_VVL1.Y(i)));
+   SUM1(USE_VVL1.Y(i),USE_VVL1.X(i))=SUM1(USE_VVL1.Y(i),USE_VVL1.X(i))+weight*USE_VVL1.WGNEED(i);
+   COUNT1(USE_VVL1.Y(i),USE_VVL1.X(i))=COUNT1(USE_VVL1.Y(i),USE_VVL1.X(i))+1;
 end
-AVG1=round(SUM1./COUNT1)/100;
+
+for i=1:length(xaxis)
+        temp=USE_VVL1;
+        temp(temp.X~=i,:)=[];
+        if height(temp)>1
+            columns1(:,i) = lsq_lut_piecewise( temp.IFF, temp.WGNEED, yaxis )
+        end
+end
+
+for j=1:length(yaxis)
+        temp=USE_VVL1;
+        temp(temp.Y~=j,:)=[];
+        if height(temp)>1
+            rows1(j,:) = lsq_lut_piecewise( temp.EFF, temp.WGNEED, xaxis )
+        end
+end
+data1=COUNT1>0
+AVG1=round(((SUM1./COUNT1)+rows1.*data1+columns1.*data1)/3)/100;
 Res_1=array2table(AVG1,'VariableNames',exhlabels,'RowNames',intlabels);
 
 %% Discretize VVL0
 
-X0=discretize(USE_VVL0.EFF,xedges);
-Y0=discretize(USE_VVL0.IFF,yedges);
 for i=1:height(USE_VVL0)
-   weight=abs(USE_VVL0.deltaPUT(i))*(0.5-abs(USE_VVL0.EFF(i)-X0(i)))*(0.5-abs(USE_VVL0.IFF(i)-Y0(i)));
-   SUM0(Y0(i),X0(i))=SUM0(Y0(i),X0(i))+(weight)*USE_VVL0.WGNEED(i);
-   COUNT0(Y0(i),X0(i))=COUNT0(Y0(i),X0(i))+weight;
+   weight=abs(USE_VVL0.deltaPUT(i))*(0.5-abs(USE_VVL0.EFF(i)-USE_VVL0.X(i)))*(0.5-abs(USE_VVL0.IFF(i)-USE_VVL0.Y(i)));
+   SUM0(USE_VVL0.Y(i),USE_VVL0.X(i))=SUM0(USE_VVL0.Y(i),USE_VVL0.X(i))+(weight)*USE_VVL0.WGNEED(i);
+   COUNT0(USE_VVL0.Y(i),USE_VVL0.X(i))=COUNT0(USE_VVL0.Y(i),USE_VVL0.X(i))+weight;
 end
-AVG0=round(SUM0./COUNT0)/100;
+
+for i=1:length(xaxis)
+        temp=USE_VVL0;
+        temp(temp.X~=i,:)=[];
+        if height(temp)>1
+            columns0(:,i) = lsq_lut_piecewise( temp.IFF, temp.WGNEED, yaxis)
+        end
+end
+
+for j=1:length(yaxis)
+        temp=USE_VVL0;
+        temp(temp.Y~=j,:)=[];
+        if height(temp)>1   
+            rows0(j,:) = lsq_lut_piecewise( temp.EFF, temp.WGNEED, xaxis )  
+        end
+end
+data0=COUNT0>0
+AVG0=round(((SUM0./COUNT0)+rows0.*data0+columns0.*data0)/3)/100;
 Res_0=array2table(AVG0,'VariableNames',exhlabels,'RowNames',intlabels);
 
-% %% Save Tables
-
-% writetable(Res_1,fullfile(pathopen,"VVL1 WG Results.csv"),'WriteRowNames',true);
-% writetable(Res_0,fullfile(pathopen,"VVL0 WG Results.csv"),'WriteRowNames',true);
 
 %% Plot Scatters
 
