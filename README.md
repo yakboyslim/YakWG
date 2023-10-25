@@ -1,4 +1,6 @@
 # YakWG
+
+Superceded by YakTuner https://github.com/yakboyslim/YakTuner
 ----
 ## What's it do?
 This program will open log files and determine areas of WOT and suggest WG Feedforward values based on the WG Final and PUT difference.
